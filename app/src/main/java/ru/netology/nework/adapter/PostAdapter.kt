@@ -3,7 +3,7 @@ package ru.netology.nework.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 
-import android.widget.ListAdapter
+import androidx.recyclerview.widget.ListAdapter
 import android.widget.PopupMenu
 
 import androidx.recyclerview.widget.DiffUtil
@@ -41,7 +41,9 @@ class PostAdapter(private val interactionListener: OnButtonInteractionListener) 
         return PostViewHolder(postBinding, interactionListener)
     }
 
-
+    override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
+        holder.bind(getItem(position))
+    }
 
 }
 
