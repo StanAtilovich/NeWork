@@ -1,6 +1,7 @@
 package ru.netology.nework.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 
 import androidx.recyclerview.widget.ListAdapter
@@ -63,6 +64,28 @@ class PostViewHolder(
 
             btLike.setOnClickListener {
                 interactionListener.onLike(post)
+            }
+
+            if (!post.ownedByMe){
+                btPostOptions.visibility = View.GONE
+            }
+            else {
+                btPostOptions.visibility = View.VISIBLE
+                btPostOptions.setOnClickListener {
+                    PopupMenu(it.context, it).apply {
+                        inflate(R.menu.post_list_item_menu)
+                        menu.setGroupVisible(R.id.post_modification, post.ownedByMe)
+                        setOnMenuItemClickListener { menuItem->
+                            when (menuItem.itemId){
+                                R.id.action_delete ->{
+                                    interactionListener.onRemove(post)
+                                    true
+                                }
+                                else -> false
+                            }
+                        }
+                    }.show()
+                }
             }
 
             btPostOptions.setOnClickListener {

@@ -1,7 +1,6 @@
 package ru.netology.nework.data
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.map
+
 import ru.netology.nework.api.PostApi
 import ru.netology.nework.db.PostDao
 import ru.netology.nework.db.PostEntity
@@ -9,10 +8,12 @@ import ru.netology.nework.db.toDto
 import ru.netology.nework.db.toEntity
 import ru.netology.nework.dto.Post
 import java.io.IOException
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 class PostRepository(private val postDao: PostDao) {
 
-    fun getAllPosts(): LiveData<List<Post>> {
+    fun getAllPosts(): Flow<List<Post>> {
         return postDao.getAllPosts().map {
             it.toDto()
         }
@@ -21,15 +22,23 @@ class PostRepository(private val postDao: PostDao) {
 
     suspend fun createPost(post: Post) {
         try {
-            val response = PostApi.retrofitService.createPost(post)
-            if (!response.isSuccessful) {
+            val createPostResponse = PostApi.retrofitService.createPost(post)
+            if (!createPostResponse.isSuccessful) {
                 Error().printStackTrace()
                 throw Error()
                 // TODO create a comprehensive wrapper for all app errors
             }
             // TODO create a comprehensive wrapper for all app errors
-            val body = response.body() ?: throw Error()
-            postDao.createPost(PostEntity.fromDto(body))
+            val createPostBody = createPostResponse.body() ?: throw Error()
+
+            // additional network call to get the created post is required
+            // because createPostBody doesn't have authorName set (it is set via backend),
+            // so we cannot pass createPostBody to db and prefer to get the newly created
+            // post explicitly
+            val getPostResponse = PostApi.retrofitService.getPostById(createPostBody.id)
+            val getPostBody = getPostResponse.body() ?: throw Error()
+
+            postDao.createPost(PostEntity.fromDto(getPostBody))
         } catch (e: IOException) {
             e.printStackTrace()
             // TODO create a comprehensive wrapper for all app errors

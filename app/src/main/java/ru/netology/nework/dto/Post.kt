@@ -16,7 +16,8 @@ data class Post(
     val attachment: MediaAttachment? = MediaAttachment(
         url = "netology.jpg",
         type = "IMAGE"
-    )
+    ),
+    val ownedByMe: Boolean = false
 ) {
 }
 
