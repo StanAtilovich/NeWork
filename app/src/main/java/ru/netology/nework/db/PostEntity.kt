@@ -3,7 +3,6 @@ package ru.netology.nework.db
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import org.jetbrains.annotations.NotNull
 import ru.netology.nework.dto.MediaAttachment
 import ru.netology.nework.dto.Post
 import ru.netology.nework.dto.PostCoords

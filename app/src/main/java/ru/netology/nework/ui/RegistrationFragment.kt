@@ -9,20 +9,22 @@ import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.Snackbar
 import ru.netology.nework.R
 import ru.netology.nework.databinding.FragmentRegistrationBinding
 import ru.netology.nework.util.AndroidUtils
-import ru.netology.nework.viewModel.SignInUpViewModel
+import ru.netology.nework.viewModel.LoginRegistrationViewModel
 
 class RegistrationFragment : Fragment() {
 
     private lateinit var navController: NavController
     private lateinit var binding: FragmentRegistrationBinding
-    private val viewModel: SignInUpViewModel by viewModels(
+    private val viewModel: LoginRegistrationViewModel by viewModels(
         ownerProducer = ::requireParentFragment
     )
 
@@ -42,7 +44,17 @@ class RegistrationFragment : Fragment() {
             }
         }
 
-        setOnCreateNewAccountListener()
+        setOnUseExistingAccountListener()
+
+        viewModel.dataState.observe(viewLifecycleOwner) { state ->
+            binding.progressBar.isVisible = state.isLoading
+
+            if (state.hasError) {
+                val msg = state.errorMessage ?: "Something went wrong, please try again later."
+                Snackbar.make(binding.root, msg, Snackbar.LENGTH_SHORT).show()
+                viewModel.invalidateDataState()
+            }
+        }
 
         binding.signUpBt.setOnClickListener {
             val login = binding.userLoginEt.text.toString().trim()
@@ -84,7 +96,7 @@ class RegistrationFragment : Fragment() {
         return binding.root
     }
 
-    private fun setOnCreateNewAccountListener() {
+    private fun setOnUseExistingAccountListener() {
         val spanActionText = getString(R.string.tv_signIn_span_action_registration_fragment)
         val createAccClickableSpan = object : ClickableSpan() {
             override fun onClick(widget: View) {
@@ -99,8 +111,6 @@ class RegistrationFragment : Fragment() {
                 Spanned.SPAN_INCLUSIVE_INCLUSIVE
             )
             binding.tvCreateNewAccount.text = this
-            // The TextView delegates handling of key events, trackball motions and touches to the
-            // movement method for purposes of content navigation.
             binding.tvCreateNewAccount.movementMethod = LinkMovementMethod.getInstance()
         }
     }

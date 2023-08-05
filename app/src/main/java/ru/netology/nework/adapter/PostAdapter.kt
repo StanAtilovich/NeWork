@@ -3,15 +3,12 @@ package ru.netology.nework.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-
 import androidx.recyclerview.widget.ListAdapter
 import android.widget.PopupMenu
-
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import ru.netology.nework.R
 import ru.netology.nework.databinding.PostListItemBinding
-
 import ru.netology.nework.dto.Post
 
 

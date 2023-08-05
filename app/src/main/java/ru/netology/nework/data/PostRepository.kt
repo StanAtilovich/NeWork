@@ -10,6 +10,11 @@ import ru.netology.nework.dto.Post
 import java.io.IOException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import ru.netology.nework.error.ApiError
+import ru.netology.nework.error.DbError
+import ru.netology.nework.error.NetworkError
+import ru.netology.nework.error.UndefinedError
+import java.sql.SQLException
 
 class PostRepository(private val postDao: PostDao) {
 
@@ -25,26 +30,24 @@ class PostRepository(private val postDao: PostDao) {
             val createPostResponse = PostApi.retrofitService.createPost(post)
             if (!createPostResponse.isSuccessful) {
                 Error().printStackTrace()
-                throw Error()
-                // TODO create a comprehensive wrapper for all app errors
+                throw ApiError(createPostResponse.code())
             }
-            // TODO create a comprehensive wrapper for all app errors
-            val createPostBody = createPostResponse.body() ?: throw Error()
+            val createPostBody =
+                createPostResponse.body() ?: throw ApiError(createPostResponse.code())
 
-            // additional network call to get the created post is required
-            // because createPostBody doesn't have authorName set (it is set via backend),
-            // so we cannot pass createPostBody to db and prefer to get the newly created
-            // post explicitly
             val getPostResponse = PostApi.retrofitService.getPostById(createPostBody.id)
-            val getPostBody = getPostResponse.body() ?: throw Error()
+            if (!getPostResponse.isSuccessful) {
+                throw ApiError(getPostResponse.code())
+            }
+            val getPostBody = getPostResponse.body() ?: throw ApiError(getPostResponse.code())
 
             postDao.createPost(PostEntity.fromDto(getPostBody))
         } catch (e: IOException) {
-            e.printStackTrace()
-            // TODO create a comprehensive wrapper for all app errors
+            throw NetworkError
+        } catch (e: SQLException) {
+            throw DbError
         } catch (e: Exception) {
-            e.printStackTrace()
-            // TODO create a comprehensive wrapper for all app errors
+            throw UndefinedError
         }
     }
 
@@ -56,35 +59,36 @@ class PostRepository(private val postDao: PostDao) {
             val response = PostApi.retrofitService.deletePost(postId)
             if (!response.isSuccessful) {
                 postDao.createPost(postToDelete)
-                throw Error()
+                throw ApiError(response.code())
 
             }
         } catch (e: IOException) {
-            e.printStackTrace()
+            throw NetworkError
 
+        } catch (e: SQLException) {
+            throw DbError
         } catch (e: Exception) {
-            e.printStackTrace()
+            throw UndefinedError
 
         }
     }
 
-   suspend fun loadPostsFromWeb() {
-       try {
-           val response = PostApi.retrofitService.getAllPosts()
-           if (!response.isSuccessful){
-               throw Error()
+    suspend fun loadPostsFromWeb() {
+        try {
+            val response = PostApi.retrofitService.getAllPosts()
+            if (!response.isSuccessful) {
+                throw ApiError(response.code())
 
-           }
+            }
 
-           val body = response.body() ?: throw Error()
-           postDao.createPosts(body.toEntity())
-       } catch (e: IOException) {
-           e.printStackTrace()
+            val body = response.body() ?: throw ApiError(response.code())
+            postDao.createPosts(body.toEntity())
+        } catch (e: IOException) {
+            throw NetworkError
+        } catch (e: SQLException) {
+            throw UndefinedError
 
-       } catch (e: Exception) {
-           e.printStackTrace()
-
-       }
+        }
     }
 
 }

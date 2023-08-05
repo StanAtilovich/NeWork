@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import ru.netology.nework.R
 import ru.netology.nework.databinding.FragmentProfileBinding
 import ru.netology.nework.viewModel.ProfileViewModel
 

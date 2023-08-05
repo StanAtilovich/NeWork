@@ -18,19 +18,18 @@ data class Post(
         type = "IMAGE"
     ),
     val ownedByMe: Boolean = false
-) {
-}
+)
+
 
 data class MediaAttachment(
     val url: String = "",
     val type: String = "",
-) {
+)
 
-}
+
 
 data class PostCoords(
     val lat: Double = 0.0,
     val lng: Double = 0.0,
-) {
+)
 
-}

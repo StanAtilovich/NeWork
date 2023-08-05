@@ -11,10 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import ru.netology.nework.R
-
 import ru.netology.nework.databinding.FragmentCreateEditPostMenuBinding
-
-import ru.netology.nework.db.PostEntity
 import ru.netology.nework.dto.Post
 import ru.netology.nework.viewModel.PostViewModel
 
