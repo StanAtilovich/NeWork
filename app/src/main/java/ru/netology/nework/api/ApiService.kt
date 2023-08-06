@@ -50,7 +50,8 @@ object PostApi {
 interface ApiService {
 
     companion object {
-        const val BASE_URL = "${BuildConfig.BASE_URL}/api/slow"
+       // const val BASE_URL = "${BuildConfig.BASE_URL}/api/slow"
+        const val BASE_URL = "${BuildConfig.BASEURL}/api/slow"
 
     }
 
