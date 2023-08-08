@@ -15,13 +15,14 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nework.R
 import ru.netology.nework.databinding.FragmentRegistrationBinding
 import ru.netology.nework.util.AndroidUtils
 import ru.netology.nework.viewModel.LoginRegistrationViewModel
 
+@AndroidEntryPoint
 class RegistrationFragment : Fragment() {
-
     private lateinit var navController: NavController
     private lateinit var binding: FragmentRegistrationBinding
     private val viewModel: LoginRegistrationViewModel by viewModels(

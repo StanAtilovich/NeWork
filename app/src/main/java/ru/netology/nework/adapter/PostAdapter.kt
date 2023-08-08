@@ -10,11 +10,13 @@ import androidx.recyclerview.widget.RecyclerView
 import ru.netology.nework.R
 import ru.netology.nework.databinding.PostListItemBinding
 import ru.netology.nework.dto.Post
+import ru.netology.nework.util.AndroidUtils
 
 
 interface OnButtonInteractionListener {
     fun onLike(post: Post)
     fun onRemove(post: Post)
+    fun onEdit(post: Post)
 }
 
 class PostAdapter(private val interactionListener: OnButtonInteractionListener) : ListAdapter <Post, PostViewHolder> (PostDiffCallback) {
@@ -54,9 +56,9 @@ class PostViewHolder(
     fun bind(post: Post) {
         with(postBinding) {
             tVUserName.text = post.author
-            tVPublished.text = post.published.toString()
+            tVPublished.text = AndroidUtils.formatMillisToDate(post.published)
             tvContent.text = post.content
-            btLike.isChecked = post.isLiked
+            btLike.isChecked = post.likedByMe
             btLike.text = post.likeCount.toString()
 
             btLike.setOnClickListener {
@@ -92,6 +94,10 @@ class PostViewHolder(
                         when (menuItem.itemId) {
                             R.id.action_delete -> {
                                 interactionListener.onRemove(post)
+                                true
+                            }
+                            R.id.action_edit -> {
+                                interactionListener.onEdit(post)
                                 true
                             }
                             else -> false

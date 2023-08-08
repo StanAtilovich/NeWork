@@ -7,7 +7,7 @@ data class Post(
     val authorAvatar: String = "",
     val content: String = "",
     val published: Long = 0L,
-    val isLiked: Boolean = false,
+    val likedByMe: Boolean = false,
     val likeCount: Int = 0,
     val coords: PostCoords? = PostCoords(
         lat = 0.0,
@@ -17,7 +17,8 @@ data class Post(
         url = "netology.jpg",
         type = "IMAGE"
     ),
-    val ownedByMe: Boolean = false
+    val ownedByMe: Boolean = false,
+    val likeOwnerIds: Set<Int> = emptySet<Int>()
 )
 
 

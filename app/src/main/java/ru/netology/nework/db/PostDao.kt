@@ -16,11 +16,14 @@ interface PostDao {
     suspend fun getPostById(id: Long) : PostEntity
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun createPosts(posts: List<PostEntity>)
+    suspend fun insertPosts(posts: List<PostEntity>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun createPost(post: PostEntity)
+    suspend fun insertPost(post: PostEntity)
 
     @Query("DELETE FROM PostEntity WHERE id = :id")
     suspend fun deletePost(id: Long)
+
+    @Query("DELETE FROM PostEntity")
+    suspend fun clearPostTable()
 }

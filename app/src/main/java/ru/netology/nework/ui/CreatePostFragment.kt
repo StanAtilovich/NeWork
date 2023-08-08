@@ -13,7 +13,9 @@ import androidx.navigation.fragment.findNavController
 import ru.netology.nework.R
 import ru.netology.nework.databinding.FragmentCreateEditPostMenuBinding
 import ru.netology.nework.dto.Post
+import ru.netology.nework.util.AndroidUtils
 import ru.netology.nework.viewModel.PostViewModel
+
 
 class CreatePostFragment : Fragment() {
 
@@ -28,9 +30,24 @@ class CreatePostFragment : Fragment() {
     ): View {
         binding = FragmentCreateEditPostMenuBinding.inflate(inflater, container, false)
         setHasOptionsMenu(true)
+        viewModel.editedPost.observe(viewLifecycleOwner) { editedPost ->
+            editedPost?.let {
 
+                (activity as MainActivity?)?.setActionBarTitle(getString(R.string.change_post_fragment_title))
+                binding.eTPostContent.setText(editedPost.content)
+                binding.eTPostContent.requestFocus(
+                    binding.eTPostContent.text.lastIndex
+                )
+                AndroidUtils.showKeyboard(binding.eTPostContent)
+            }
+        }
 
         return binding.root
+    }
+
+    override fun onDestroy() {
+        viewModel.invalidateEditPost()
+        super.onDestroy()
     }
 
 
@@ -42,7 +59,10 @@ class CreatePostFragment : Fragment() {
         return when(item.itemId) {
             R.id.action_add_post -> {
                 val content = binding.eTPostContent.text.toString()
-                viewModel.savePost(Post(content = content))
+                viewModel.editedPost.value?.let {
+                    viewModel.savePost(it.copy(content = content))
+                } ?: viewModel.savePost(Post(content = content))
+                AndroidUtils.hideKeyboard(requireView())
                 findNavController().popBackStack()
                 true
             }

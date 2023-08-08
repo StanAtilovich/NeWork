@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
+
 }
 
 android {
@@ -18,8 +19,9 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildFeatures {
-        viewBinding = true
         buildConfig = true
+        viewBinding = true
+
     }
 
     buildTypes {
@@ -77,4 +79,9 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
 
     implementation("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.10")
+
+    implementation("com.google.dagger:hilt-android:2.46.1")
+    kapt("com.google.dagger:hilt-android-compiler:2.35")
+
+    implementation("androidx.paging:paging-runtime-ktx:3.2.0")
 }
