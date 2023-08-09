@@ -7,15 +7,14 @@ plugins {
 
 android {
     namespace 'ru.netology.nework'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "ru.netology.nework"
         minSdk 24
-        targetSdk 33
+        targetSdk 34
         versionCode 1
         versionName "1.0"
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
 
@@ -59,7 +58,6 @@ dependencies {
     implementation 'com.nambimobile.widgets:expandable-fab:1.1.1'
     implementation 'androidx.paging:paging-compose:3.2.0'
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.8.22"
     implementation 'androidx.core:core-ktx:1.10.1'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.9.0'
@@ -96,4 +94,6 @@ dependencies {
     kapt 'com.github.bumptech.glide:compiler:4.13.2'
 
     implementation("androidx.paging:paging-runtime-ktx:3.2.0")
+
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1'
 }
