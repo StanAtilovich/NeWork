@@ -1,34 +1,31 @@
 package ru.netology.nework.viewModel
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import androidx.paging.map
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import ru.netology.nework.auth.AppAuth
-import ru.netology.nework.data.PostRepository
-import ru.netology.nework.db.AppDb
-import ru.netology.nework.dto.Post
+import ru.netology.nework.data.EventRepository
+import ru.netology.nework.dto.Event
 import ru.netology.nework.error.AppError
 import ru.netology.nework.model.FeedStateModel
 import javax.inject.Inject
 
-
 @ExperimentalPagingApi
 @HiltViewModel
-class PostViewModel @Inject constructor(
-    private val repository: PostRepository,
+class EventViewModel @Inject constructor(
+    private val repository: EventRepository,
     appAuth: AppAuth
 ) : ViewModel() {
 
@@ -40,37 +37,36 @@ class PostViewModel @Inject constructor(
         _dataState.value = FeedStateModel()
     }
 
-    private val _editedPost = MutableLiveData<Post?>(null)
-    val editedPost: LiveData<Post?>
-        get() = _editedPost
+    private val _editedEvent = MutableLiveData<Event?>(null)
+    val editedEvent: LiveData<Event?>
+        get() = _editedEvent
 
 
-    private val cached = repository.getAllPosts().cachedIn(viewModelScope)
+    private val cached = repository.getAllEvents().cachedIn(viewModelScope)
 
     @ExperimentalCoroutinesApi
-    val postList: Flow<PagingData<Post>> = appAuth
+    val eventList: Flow<PagingData<Event>> = appAuth
         .authStateFlow
         .flatMapLatest { (myId, _) ->
-            cached.map { postList ->
-                postList.map { it.copy(ownedByMe = it.authorId == myId) }
+            cached.map { pagingDataList ->
+                pagingDataList.map { it.copy(ownedByMe = myId == it.authorId) }
             }
         }
 
 
-    fun editPost(editedPost: Post) {
-        _editedPost.value = editedPost
+    fun editEvent(editedEvent: Event) {
+        _editedEvent.value = editedEvent
     }
 
-    fun invalidateEditPost() {
-        _editedPost.value = null
+    fun invalidateEditedEvent() {
+        _editedEvent.value = null
     }
 
-
-    fun savePost(post: Post) {
+    fun saveEvent(event: Event) {
         viewModelScope.launch {
             try {
                 _dataState.value = (FeedStateModel(isLoading = true))
-                repository.createPost(post)
+                repository.createEvent(event)
                 _dataState.value = (FeedStateModel(isLoading = false))
             } catch (e: Exception) {
                 _dataState.value = (FeedStateModel(
@@ -78,18 +74,17 @@ class PostViewModel @Inject constructor(
                     errorMessage = AppError.getMessage(e)
                 ))
             } finally {
-                invalidateEditPost()
+                invalidateEditedEvent()
             }
         }
     }
 
-
-    fun likePost(post: Post){
+    fun likeEvent(event: Event) {
         viewModelScope.launch {
-            try{
+            try {
                 _dataState.value = FeedStateModel()
-                repository.likePost(post)
-            } catch (e : Exception) {
+                repository.likeEvent(event)
+            } catch (e: Exception) {
                 _dataState.value = (FeedStateModel(
                     hasError = true,
                     errorMessage = AppError.getMessage(e)
@@ -98,11 +93,26 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    fun deletePost(postId: Long) {
+    fun participateInEvent(event: Event) {
+        viewModelScope.launch {
+            try {
+                _dataState.value = FeedStateModel(isLoading = true)
+                repository.participateInEvent(event)
+                _dataState.value = FeedStateModel(isLoading = false)
+            } catch (e: Exception) {
+                _dataState.value = (FeedStateModel(
+                    hasError = true,
+                    errorMessage = AppError.getMessage(e)
+                ))
+            }
+        }
+    }
+
+    fun deleteEvent(eventId: Long) {
         viewModelScope.launch {
             try {
                 _dataState.value = (FeedStateModel(isLoading = true))
-                repository.deletePost(postId)
+                repository.deleteEvent(eventId)
                 _dataState.value = (FeedStateModel(isLoading = false))
             } catch (e: Exception) {
                 _dataState.value = (FeedStateModel(

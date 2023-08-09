@@ -14,8 +14,6 @@ sealed class AppError : RuntimeException() {
                 else -> "Unknown error, please try again later."
             }
     }
-
-
 }
 
 class ApiError (val status: Int): AppError()

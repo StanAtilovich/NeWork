@@ -1,5 +1,6 @@
 package ru.netology.nework.db
 
+
 import android.content.Context
 import androidx.room.Room
 import dagger.Module
@@ -25,4 +26,15 @@ class AppDbModule {
 
     @Provides
     fun providePostDao(appDb: AppDb): PostDao = appDb.postDao()
+
+    @Provides
+    fun provideEventDao(appDb: AppDb): EventDao = appDb.eventDao()
+
+    @Provides
+    fun provideEventRemoteKeyDao(appDb: AppDb): EventRemoteKeyDao =
+        appDb.eventRemoteKeyDao()
+
+    @Provides
+    fun providePostRemoteKeyDao(appDb: AppDb): PostRemoteKeyDao =
+        appDb.postRemoteKeyDao()
 }

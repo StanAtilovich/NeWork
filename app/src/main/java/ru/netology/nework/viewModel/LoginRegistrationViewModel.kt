@@ -17,6 +17,7 @@ class LoginRegistrationViewModel @Inject constructor(
     private val repository: SignInUpRepository,
     private val appAuth: AppAuth
 ) : ViewModel() {
+
     private val _isSignedIn = MutableLiveData(false)
     val isSignedIn: LiveData<Boolean>
         get() = _isSignedIn

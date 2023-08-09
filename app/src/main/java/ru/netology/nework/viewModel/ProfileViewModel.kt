@@ -6,9 +6,9 @@ import ru.netology.nework.auth.AppAuth
 import javax.inject.Inject
 
 @HiltViewModel
-class ProfileViewModel @Inject constructor(
-    private val appAuth: AppAuth
-): ViewModel() {
+class ProfileViewModel @Inject constructor(private val appAuth: AppAuth)
+    : ViewModel() {
+
     fun onSignOut() {
         appAuth.removeAuth()
     }

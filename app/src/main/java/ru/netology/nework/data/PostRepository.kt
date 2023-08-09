@@ -3,15 +3,16 @@ package ru.netology.nework.data
 
 import androidx.room.withTransaction
 import ru.netology.nework.db.PostDao
-import ru.netology.nework.db.PostEntity
-import ru.netology.nework.db.toDto
-import ru.netology.nework.db.toEntity
+import ru.netology.nework.entity.PostEntity
+import ru.netology.nework.entity.toDto
+import ru.netology.nework.entity.toEntity
 import ru.netology.nework.dto.Post
 import java.io.IOException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import ru.netology.nework.api.ApiService
 import ru.netology.nework.db.AppDb
+import ru.netology.nework.db.PostRemoteKeyDao
 import ru.netology.nework.error.ApiError
 import ru.netology.nework.error.DbError
 import ru.netology.nework.error.NetworkError
@@ -22,7 +23,8 @@ import javax.inject.Inject
 class PostRepository @Inject constructor(
     private val postDao: PostDao,
     private val postApi: ApiService,
-    private val db: AppDb
+    private val db: AppDb,
+    postRemoteKeyDao: PostRemoteKeyDao
 ) {
     fun getAllPosts(): Flow<List<Post>> {
         return postDao.getAllPosts().map {
